@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "infochallengeconcierge"
+version = "0.1.0"
+description = ""
+authors = ["Donal Heidenblad <dheidenb@umd.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+python-dotenv = "^0.19.2"
+validate-email-address = "^1"
+SQLAlchemy = "^1.4.29"
+py-cord = { git = "https://github.com/Pycord-Development/pycord.git", rev = "fc5556f", extras = ["speed"]}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
