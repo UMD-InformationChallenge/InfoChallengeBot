@@ -31,8 +31,6 @@ RUN apk add curl git
 
 # Install all Python requirements
 RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="/root/.local/bin:${PATH}"
-RUN echo $PATH
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
@@ -47,7 +45,9 @@ RUN poetry install --without dev
 FROM builder-base as production
 
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
+RUN ${VENV_PATH}/bin/activate
+
 WORKDIR /app
 COPY . /app
-#CMD [ "poetry ", "run", "python", "bot.py" ]
-CMD tail -f /dev/null
+CMD [ "poetry ", "run", "python", "bot.py" ]
+#CMD tail -f /dev/null
