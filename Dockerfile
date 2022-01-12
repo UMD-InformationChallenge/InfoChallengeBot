@@ -45,9 +45,14 @@ RUN poetry install --without dev
 FROM builder-base as production
 
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
-RUN ${VENV_PATH}/bin/activate
+RUN echo $VENV_PATH
+RUN . $VENV_PATH/bin/activate
 
-WORKDIR /app
+
 COPY . /app
+WORKDIR /app
+RUN chmod +x ./docker-entrypoint.sh
+
+ENTRYPOINT ./docker-entrypoint.sh $0 $@
 CMD [ "poetry ", "run", "python", "bot.py" ]
 #CMD tail -f /dev/null
