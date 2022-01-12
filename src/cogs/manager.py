@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.commands import permissions, Option, SlashCommandGroup, CommandPermission
 from dotenv import load_dotenv
 
-from common import logging, checks
+from src.common import logging, checks
 
 load_dotenv()
 
