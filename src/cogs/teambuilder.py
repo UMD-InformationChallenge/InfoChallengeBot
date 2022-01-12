@@ -4,7 +4,7 @@ import discord as discord
 from discord.ext import commands
 from discord.commands import Option, SlashCommandGroup, CommandPermission
 
-from src.common import logging, checks
+from common import logging, checks
 
 from dotenv import load_dotenv
 

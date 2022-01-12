@@ -40,4 +40,6 @@ def init_db():
 
 
 # PEP8 says these shouldn't be here, but putting these here avoids circular references within this module.
-from src.models.registration import Registration
+from models.registration import Registration
+from models.convostate import ConvoState
+from models.participant import Participant

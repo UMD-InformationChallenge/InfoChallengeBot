@@ -6,9 +6,9 @@ from discord import ButtonStyle
 from discord.commands import Option, SlashCommandGroup, CommandPermission
 
 from validate_email_address import validate_email
-from src.models import Session, Registration, ConvoState, Participant
+from models import Session, Registration, ConvoState, Participant
 
-from src.common import logging, checks
+from common import logging, checks
 
 from dotenv import load_dotenv
 
