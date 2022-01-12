@@ -52,7 +52,8 @@ RUN . $VENV_PATH/bin/activate
 COPY . /app
 WORKDIR /app
 RUN chmod +x ./docker-entrypoint.sh
+#CMD tail -f /dev/null
 
 ENTRYPOINT ./docker-entrypoint.sh $0 $@
 CMD [ "poetry ", "run", "python", "bot.py" ]
-#CMD tail -f /dev/null
+##CMD tail -f /dev/null
