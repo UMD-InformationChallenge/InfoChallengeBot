@@ -146,6 +146,12 @@ class TeamBuilder(commands.Cog):
         await ctx.respond(f"**`SUCCESS:`** _build_teams: Created {num_teams} teams.", ephemeral=True)
         self.log.info(f"**`SUCCESS:`** _build_teams: {ctx.author.name} created {num_teams} teams.")
 
+    @_build_teams.error
+    async def _build_teams_error(self, ctx, error):
+        if isinstance(error, commands.CheckFailure):
+            await ctx.respond(f"**`ERROR:`** _build_teams[{ctx.author.name}]: {error}")
+            self.log.info(f"**`ERROR:`** _build_teams[{ctx.author.name}]: {error}")
+
     @commands.guild_only()
     @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
     @tb_group.command(name="createempty", description="🚫 [RESTRICTED] Add participant teams")
@@ -172,6 +178,7 @@ class TeamBuilder(commands.Cog):
     @_create_empty_teams.error
     async def _create_error(self, ctx, error):
         if isinstance(error, commands.CheckFailure):
+            await ctx.respond(f"**`ERROR:`** _create_teams[{ctx.author.name}]: {error}")
             self.log.info(f"**`ERROR:`** _create_teams[{ctx.author.name}]: {error}")
 
     @commands.guild_only()
