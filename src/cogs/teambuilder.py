@@ -113,9 +113,9 @@ class TeamBuilder(commands.Cog):
         for team_registration, participant in team_reg_participants:
             # if a new team, make one and set it to cur_team
             if cur_team is None or cur_team.team_name != team_registration.team_name:
-                team = session.query(Team).\
+                team = session.query(Team). \
                     filter(Team.team_name == team_registration.team_name,
-                           Team.guild_id == ctx.guild.id).\
+                           Team.guild_id == ctx.guild.id). \
                     one_or_none()
                 if team is None:
                     await ctx.respond(f"Creating Team: {team_registration.team_name}", ephemeral=True)
@@ -123,10 +123,10 @@ class TeamBuilder(commands.Cog):
                 cur_team = team
 
             # Check if participant is in a team. If in team, then skip.
-            team_participant = session.query(TeamParticipant).\
-                filter(TeamParticipant.team_id == cur_team.team_id,
+            team_participant = session.query(TeamParticipant). \
+                filter(TeamParticipant.team_id == cur_team.id,
                        TeamParticipant.participant_id == participant.id,
-                       TeamParticipant.guild_id == ctx.guild.id).\
+                       TeamParticipant.guild_id == ctx.guild.id). \
                 one_or_none()
             if team_participant is None:
                 # Update database to show that the participant is in a team.
@@ -216,10 +216,15 @@ class TeamBuilder(commands.Cog):
             if role is not None:
                 self.log.info(f"Deleting role: {role.name}")
                 await role.delete()
-                session.query(Team).\
-                    filter(Team.team_role_id == role.id).\
-                    delete()
-                session.commit()
+                team = session.query(Team). \
+                    filter(Team.team_role_id == role.id). \
+                    one_or_none()
+                if team is not None:
+                    session.query(TeamParticipant). \
+                        filter(TeamParticipant.team_id == team.id). \
+                        delete()
+                    session.delete(team)
+                    session.commit()
 
             cnt = cnt + 1
 
