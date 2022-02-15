@@ -137,10 +137,10 @@ class RegistratorConvoFSM:
             session.commit()
 
     def _initiate(self, **kwargs):
-        self.log.info(f"fsm._initiate: {kwargs}")
+        self.log.info(f"fsm._initiate: {kwargs} | id: {self.member.id}")
         self.next_state()
-        response = f"Hello {self.member.name}, it looks like you need to complete your registration " \
-                   f"for {self.guild.name}.\nPlease reply with your email address."
+        response = f"Hello {self.member.name}, let me help connect your registration to this Discord server.\n" \
+                   f"What is the email address you used to register for {EVENT_NAME}?"
         return response, None
 
     def _email(self, **kwargs):
@@ -185,8 +185,8 @@ class RegistratorConvoFSM:
                             response, view = self.exec(**kwargs)
             else:
                 self.log.info(f"fsm._email: invalid email {email}")
-                response = f"Hello {self.member.name}, that is not a valid email address.\n" \
-                           f"Please reply with only the email address you used to register for {EVENT_NAME}."
+                response = f"Hello, {self.member.name}.\n" \
+                           f"What is the email address you used to register for {EVENT_NAME}?"
         return response, view
 
     def _unrecognized(self, **kwargs):
