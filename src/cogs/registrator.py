@@ -25,19 +25,26 @@ IS_PRODUCTION = os.getenv('is_production')
 LOGGING_STR = os.getenv('logging_str')
 
 
-async def sync_server_roles(guild: discord.Guild, member: discord.Member, participant):
+async def sync_server_roles(guild: discord.Guild, member: discord.Member, participant=None):
     # Add Discord Roles.
     roles = dict([(r.name.lower(), int(r.id)) for r in guild.roles])
-    if participant.role.lower() == 'participant':
-        participant_role = guild.get_role(roles['participant'])
-        institution_role = guild.get_role(roles[participant.institution.lower()])
+    with Session() as session:
+        # Ugh, not all places have a Participant obj
+        if participant is not None:
+            participant = session.query(Participant).filter(Participant.guild_id == guild.id,
+                                                            Participant.discord_id == member.id).one_or_none()
+        # Don't blow up if there isn't a participant...
+        if participant is not None:
+            if participant.role.lower() == 'participant':
+                participant_role = guild.get_role(roles['participant'])
+                institution_role = guild.get_role(roles[participant.institution.lower()])
 
-        await member.add_roles(institution_role,
-                               participant_role,
-                               reason='InfoChallengeConcierge added roles')
-    else:
-        role = guild.get_role(roles[participant.role.lower()])
-        await member.add_roles(role, reason='InfoChallengeConcierge added roles')
+                await member.add_roles(institution_role,
+                                       participant_role,
+                                       reason='InfoChallengeConcierge added roles')
+            else:
+                role = guild.get_role(roles[participant.role.lower()])
+                await member.add_roles(role, reason='InfoChallengeConcierge added roles')
 
 
 class Confirm(View):
@@ -271,7 +278,6 @@ class RegistratorConvoFSM:
                                             role=reg_obj.role))
 
                     session.commit()
-            await sync_server_roles(self.guild, self.member, participant)
 
             response = f"{self.member.name}, your registration is now complete. Congratulations!\n" \
                        f"You will now have access to the participate in the {EVENT_NAME} Discord."
@@ -308,9 +314,10 @@ class Registrator(commands.Cog):
         if member.bot is True:
             return
 
-        reg_fsm = RegistratorConvoFSM(self.log, member.guild, member)
-        msg, view = reg_fsm.exec()
-        await member.send(msg)
+        if member.guild.id == EVENT_GUILD_ID:
+            reg_fsm = RegistratorConvoFSM(self.log, member.guild, member)
+            msg, view = reg_fsm.exec()
+            await member.send(msg)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -318,6 +325,7 @@ class Registrator(commands.Cog):
             return
         if message.content.startswith(self.bot.command_prefix):
             return
+        # Only respond to direct messages (messages without a guild)
         if not message.guild:
             shared_guild_ids = [g.id for g in message.author.mutual_guilds]
 
@@ -325,8 +333,12 @@ class Registrator(commands.Cog):
                 guild = [g for g in message.author.mutual_guilds if g.id == EVENT_GUILD_ID].pop()
                 member = guild.get_member(message.author.id)
                 reg_fsm = RegistratorConvoFSM(self.log, guild, member)
-
                 msg, view = reg_fsm.exec(message=message.content)
+
+                if reg_fsm.state.state == 'registered':
+                    await sync_server_roles(guild, member)
+
+                # Pycord does not like it if there is a view argument that is set to none...
                 if view is not None:
                     await message.reply(msg, view=view)
                 else:
