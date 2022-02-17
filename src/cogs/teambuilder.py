@@ -47,6 +47,10 @@ class TeamBuilder(commands.Cog):
 
     async def _create_team(self, session, team_name, guild: discord.Guild):
         perms = discord.Permissions.none()
+
+        if not team_name.startswith('Team'):
+            team_name = f"Team {team_name}"
+
         team_role = await guild.create_role(name=team_name,
                                             permissions=perms)
         team = Team(team_name=team_name,
@@ -130,7 +134,7 @@ class TeamBuilder(commands.Cog):
                            TeamParticipant.participant_id == participant.id,
                            TeamParticipant.guild_id == ctx.guild.id). \
                     one_or_none()
-                if team_participant is None:
+                if team_participant is None or participant.role.lower() == 'mentor':
                     # Update database to show that the participant is in a team.
                     team_participant = TeamParticipant(
                         team_id=cur_team.id,
