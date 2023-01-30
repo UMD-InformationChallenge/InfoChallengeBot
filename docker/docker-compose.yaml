@@ -1,6 +1,30 @@
-version: "0.1"
+version: "3.1"
 services:
   discord-bot:
     build:
       context: ../
       dockerfile: docker/Dockerfile
+    environment:  # cofigure these in your .env file outside of container
+      - IS_PROD=${IS_PROD}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_PREFIX=${BOT_PREFIX}
+      - EVENT_NAME=${EVENT_NAME}
+      - EVENT_GUILD_ID=${EVENT_GUILD_ID}
+      - EVENT_BOT_CHANNEL_ID=${EVENT_BOT_CHANNEL_ID}
+      - EVENT_CONTACT_EMAIL=${EVENT_CONTACT_EMAIL}
+      - DB_CONN_URI=mariadb+mariadbconnector://root:${MARIADB_ROOT_PASSWORD}@db:3306/eventbot
+      - DATA_DIR=${DATA_DIR}
+      - GUILD_OWNER_ID=${GUILD_OWNER_ID}
+      - BOT_MANAGER_ROLE_ID=${BOT_MANAGER_ROLE_ID}
+      - LOGGING_STR=${LOGGING_STR}
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Use root as user
+      MARIADB_DATABASE: eventbot
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

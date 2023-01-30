@@ -9,11 +9,11 @@ from common import logging, checks
 
 load_dotenv()
 
-LOGGING_STR = os.getenv('logging_str')
-EVENT_GUILD_ID = int(os.getenv('event_guild_id'))
-EVENT_BOT_CHANNEL_ID = int(os.getenv('event_bot_channel_id'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('bot_manager_role_id'))
-GUILD_OWNER_ID = int(os.getenv('guild_owner_id'))
+LOGGING_STR = os.getenv('LOGGING_STR')
+EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
+EVENT_BOT_CHANNEL_ID = int(os.getenv('EVENT_BOT_CHANNEL_ID'))
+BOT_MANAGER_ROLE_ID = int(os.getenv('BOT_MANAGER_ROLE_ID'))
+GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 
 
 class Manager(commands.Cog):

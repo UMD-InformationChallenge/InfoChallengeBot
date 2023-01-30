@@ -9,8 +9,8 @@ from sqlalchemy.dialects.mysql import BIGINT
 from dotenv import load_dotenv
 
 load_dotenv()
-IS_PROD = os.environ['is_production'] == 'True'
-DB_CONN_URI = os.environ['db_conn_uri']
+IS_PROD = os.environ['IS_PROD'] == 'True'
+DB_CONN_URI = os.environ['DB_CONN_URI']
 
 engine = create_engine(DB_CONN_URI,
                        pool_size=50,

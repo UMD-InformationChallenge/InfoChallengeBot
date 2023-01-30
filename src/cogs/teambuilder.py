@@ -13,15 +13,15 @@ from models import Participant, Session, Team, TeamRegistration, TeamParticipant
 
 load_dotenv()
 
-EVENT_NAME = os.getenv('event_name')
-EVENT_GUILD_ID = int(os.getenv('event_guild_id'))
-EVENT_CONTACT_EMAIL = os.getenv('event_contact_email')
-EVENT_BOT_CHANNEL_ID = int(os.getenv('event_bot_channel_id'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('bot_manager_role_id'))
-GUILD_OWNER_ID = int(os.getenv('guild_owner_id'))
+EVENT_NAME = os.getenv('EVENT_NAME')
+EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
+EVENT_CONTACT_EMAIL = os.getenv('EVENT_CONTACT_EMAIL')
+EVENT_BOT_CHANNEL_ID = int(os.getenv('EVENT_BOT_CHANNEL_ID'))
+BOT_MANAGER_ROLE_ID = int(os.getenv('BOT_MANAGER_ROLE_ID'))
+GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 
-IS_PRODUCTION = os.getenv('is_production')
-LOGGING_STR = os.getenv('logging_str')
+IS_PROD = os.getenv('IS_PROD')
+LOGGING_STR = os.getenv('LOGGING_STR')
 
 
 def _filter_team_cats(guild):

@@ -60,7 +60,7 @@ RUN chmod +x /opt/docker/docker-entrypoint.sh
 RUN mkdir data
 
 COPY /src .
-COPY .env ./
+# COPY .env ./  Not a good idea -GJ
 
 ENTRYPOINT /opt/docker/docker-entrypoint.sh $0 $@
 CMD ["python", "bot.py"]
