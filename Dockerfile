@@ -1,7 +1,7 @@
 ###############################################
 # Base Image
 ###############################################
-FROM python:3.9-alpine AS python-base
+FROM python:3.9.16-alpine AS python-base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -20,7 +20,7 @@ ENV PATH="${POETRY_HOME}/bin:$VENV_PATH/bin:$PATH"
 
 # These are required for the pycord[speed] extensions
 RUN apk update && apk upgrade && \
-    apk add --no-cache --virtual .build-deps cargo gcc g++ libffi-dev patchelf curl git
+    apk add --no-cache --virtual .build-deps cargo gcc g++ libgcc libstdc++ libffi-dev patchelf curl git
 
 ###############################################
 # Builder Image
@@ -35,7 +35,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 - --preview
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
-COPY ../poetry.lock ../pyproject.toml ./
+COPY ./poetry.lock ./pyproject.toml ./
 
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --without dev,utils,docs
@@ -48,7 +48,8 @@ FROM builder-base as production
 # Copy over the built python libraries
 COPY --from=builder-base $VENV_PATH $VENV_PATH
 # Make the image smaller by removing build-deps
-RUN apk del .build-deps
+# Removed b/c build deps are required by orjson package
+# RUN apk del .build-deps
 
 WORKDIR /app
 
@@ -56,10 +57,7 @@ WORKDIR /app
 COPY ./docker/docker-entrypoint.sh /opt/docker/docker-entrypoint.sh
 RUN chmod +x /opt/docker/docker-entrypoint.sh
 
-# Make an empty data director for sqlite
-RUN mkdir data
-
-COPY /src .
+COPY ./src .
 # COPY .env ./  Not a good idea -GJ
 
 ENTRYPOINT /opt/docker/docker-entrypoint.sh $0 $@
