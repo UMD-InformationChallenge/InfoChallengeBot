@@ -41,7 +41,7 @@ The bot also requires the following Privileged Gateway Intents:
 In the future, it may be possible to reduce the number of permissions required for the bot to run.
 
 You'll need to invite your bot to your server with a URL like this:
-https://discord.com/oauth2/authorize?client_id=<client_id>&scope=bot&permissions=8
+https://discord.com/oauth2/authorize?client_id=<application id>&scope=bot&permissions=8
 
 
 ### Steps to run locally:

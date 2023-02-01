@@ -3,7 +3,7 @@ import re
 import time
 
 import discord
-from discord.commands import Option, CommandPermission, SlashCommandGroup
+from discord.commands import Option, SlashCommandGroup
 from discord.ext import commands
 from dotenv import load_dotenv
 from sqlalchemy import select, delete
@@ -22,7 +22,6 @@ GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 
 IS_PROD = os.getenv('IS_PROD')
 LOGGING_STR = os.getenv('LOGGING_STR')
-
 
 def _filter_team_cats(guild):
     tnm = re.compile('^Team ([0-9]+)')
@@ -56,11 +55,7 @@ class TeamBuilder(commands.Cog):
         "teams",
         "Commands to manage teams",
         guild_ids=[EVENT_GUILD_ID],
-        permissions=[
-            CommandPermission(
-                GUILD_OWNER_ID, 2, True
-            ),  # Always allow owner
-        ]
+        checks=[commands.is_owner()]
     )
 
     async def _create_team(self, session, team_name, guild: discord.Guild):

@@ -54,7 +54,7 @@ COPY --from=builder-base $VENV_PATH $VENV_PATH
 WORKDIR /app
 
 # Copying in the entrypoint
-COPY ./docker/docker-entrypoint.sh /opt/docker/docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /opt/docker/docker-entrypoint.sh
 RUN chmod +x /opt/docker/docker-entrypoint.sh
 
 COPY ./src .

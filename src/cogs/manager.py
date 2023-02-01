@@ -1,7 +1,7 @@
 import os
 
 import discord as discord
-from discord.commands import permissions, Option, SlashCommandGroup, CommandPermission
+from discord.commands import permissions, Option, SlashCommandGroup
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -15,6 +15,11 @@ EVENT_BOT_CHANNEL_ID = int(os.getenv('EVENT_BOT_CHANNEL_ID'))
 BOT_MANAGER_ROLE_ID = int(os.getenv('BOT_MANAGER_ROLE_ID'))
 GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 
+def is_owner_or_botmgr():
+    async def predicate(ctx):
+        role = discord.utils.get(ctx.guild.roles, id=BOT_MANAGER_ROLE_ID)
+        return (role in ctx.author.roles) or ctx.author.id == GUILD_OWNER_ID
+    return commands.check(predicate)
 
 class Manager(commands.Cog):
     def __init__(self, bot):
@@ -26,14 +31,7 @@ class Manager(commands.Cog):
         "manager",
         "Commands to manage InfoChallengeConcierge",
         guild_ids=[EVENT_GUILD_ID],
-        permissions=[
-            CommandPermission(
-                BOT_MANAGER_ROLE_ID, 1, True
-            ),  # Only Users in Discord Managers
-            CommandPermission(
-                GUILD_OWNER_ID, 2, True
-            )  # Ensures the owner_id user can access this, and no one else
-        ]
+        checks=[is_owner_or_botmgr()]
     )
 
     @commands.guild_only()
@@ -91,7 +89,7 @@ class Manager(commands.Cog):
 
     @commands.guild_only()
     @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @permissions.is_owner()
+    @commands.is_owner()
     @manager_group.command(name='unload_cog', description="🚫 [RESTRICTED] Unload cog")
     async def _unload_cog(self, ctx, *, cog: Option(str, "What cog do you want to unload?")):
         self.log.info(f"unload_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")
@@ -114,7 +112,7 @@ class Manager(commands.Cog):
 
     @commands.guild_only()
     @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @permissions.is_owner()
+    @commands.is_owner()
     @manager_group.command(name='load_cog', description="🚫 [RESTRICTED] Load cog")
     async def _load_cog(self, ctx, *, cog: Option(str, "What cog do you want to load?")):
         self.log.info(f"load_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")

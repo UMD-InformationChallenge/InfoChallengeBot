@@ -3,7 +3,7 @@ import discord as discord
 from discord.ext import commands
 from discord.ui import View, Button
 from discord import ButtonStyle
-from discord.commands import Option, SlashCommandGroup, CommandPermission
+from discord.commands import Option, SlashCommandGroup
 
 from validate_email_address import validate_email
 
@@ -26,6 +26,11 @@ GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 IS_PROD = os.getenv('IS_PROD')
 LOGGING_STR = os.getenv('LOGGING_STR')
 
+def is_owner_or_botmgr():
+    async def predicate(ctx):
+        role = discord.utils.get(ctx.guild.roles, id=BOT_MANAGER_ROLE_ID)
+        return (role in ctx.author.roles) or ctx.author.id == GUILD_OWNER_ID
+    return commands.check(predicate)
 
 async def sync_server_roles(guild: discord.Guild, member: discord.Member, participant: models.Participant):
     # Add Discord Roles.
@@ -304,14 +309,7 @@ class Registrator(commands.Cog):
         "reg",
         "Commands to manage registrations",
         guild_ids=[EVENT_GUILD_ID],
-        permissions=[
-            CommandPermission(
-                BOT_MANAGER_ROLE_ID, 1, True
-            ),  # Only Users in Discord Managers
-            CommandPermission(
-                GUILD_OWNER_ID, 2, True
-            ),  # Always allow owner
-        ]
+        checks=[is_owner_or_botmgr()]
     )
 
     @commands.Cog.listener()
