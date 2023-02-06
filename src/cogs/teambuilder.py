@@ -15,10 +15,6 @@ load_dotenv()
 
 EVENT_NAME = os.getenv('EVENT_NAME')
 EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
-EVENT_CONTACT_EMAIL = os.getenv('EVENT_CONTACT_EMAIL')
-EVENT_BOT_CHANNEL_ID = int(os.getenv('EVENT_BOT_CHANNEL_ID'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('BOT_MANAGER_ROLE_ID'))
-GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
 
 IS_PROD = os.getenv('IS_PROD')
 LOGGING_STR = os.getenv('LOGGING_STR')
@@ -108,7 +104,7 @@ class TeamBuilder(commands.Cog):
         return team
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
+    @checks.is_in bot_channel()
     @tb_group.command(name="build", description="🚫 [RESTRICTED] Build teams from team registrations")
     async def _build_teams(self, ctx):
         await ctx.respond(f"**`START:`** _build_teams")
@@ -211,7 +207,7 @@ class TeamBuilder(commands.Cog):
             self.log.info(f"**`ERROR:`** _build_teams[{ctx.author.name}]: {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
+    @checks.is_in_bot_channel()
     @tb_group.command(name="delete_all_teams", description="🚫 [RESTRICTED] Delete all participant teams")
     async def _delete(self, ctx,
                       confirm: Option(bool,
@@ -274,7 +270,7 @@ class TeamBuilder(commands.Cog):
             self.log.info(f"**`ERROR:`** _delete_teams[{ctx.author.name}]: {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
+    @checks.is_in_bot_channel()
     @tb_group.command(name="delete_one", description="🚫 [RESTRICTED] Delete specified team")
     async def _delete_one(self, ctx,
                           team_name=Option(str,
