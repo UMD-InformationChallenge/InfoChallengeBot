@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   discord-bot:
-    image: gregjan/infochallengebot:0.6
+    image: gregjan/infochallengebot:1.5
     build:
       context: .
       dockerfile: Dockerfile

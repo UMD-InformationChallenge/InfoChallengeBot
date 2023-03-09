@@ -22,7 +22,7 @@ class Manager(commands.Cog):
         "manager",
         "Commands to manage InfoChallengeConcierge",
         guild_ids=[EVENT_GUILD_ID],
-        checks=[is_owner_or_botmgr()]
+        checks=[checks.is_owner_or_botmgr()]
     )
 
     @commands.guild_only()

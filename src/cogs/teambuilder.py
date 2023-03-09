@@ -104,7 +104,7 @@ class TeamBuilder(commands.Cog):
         return team
 
     @commands.guild_only()
-    @checks.is_in bot_channel()
+    @checks.is_in_bot_channel()
     @tb_group.command(name="build", description="🚫 [RESTRICTED] Build teams from team registrations")
     async def _build_teams(self, ctx):
         await ctx.respond(f"**`START:`** _build_teams")

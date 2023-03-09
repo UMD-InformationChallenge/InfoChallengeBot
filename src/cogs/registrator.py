@@ -29,9 +29,9 @@ async def sync_server_roles(guild: discord.Guild, member: discord.Member, partic
 
     if participant.role.lower() == 'participant':
         participant_role = guild.get_role(roles['participant'])
-        institution_role = guild.get_role(roles[participant.institution.lower()])
+        # institution_role = guild.get_role(roles[participant.institution.lower()])
 
-        await member.add_roles(institution_role,
+        await member.add_roles(# institution_role,
                                participant_role,
                                reason='InfoChallengeConcierge added roles')
     else:
@@ -300,7 +300,7 @@ class Registrator(commands.Cog):
         "reg",
         "Commands to manage registrations",
         guild_ids=[EVENT_GUILD_ID],
-        checks=[is_owner_or_botmgr()]
+        checks=[checks.is_owner_or_botmgr()]
     )
 
     @commands.Cog.listener()
@@ -366,9 +366,9 @@ class Registrator(commands.Cog):
                 roles = dict([(r.name.lower(), int(r.id)) for r in guild.roles])
                 if participant.role.lower() == 'participant':
                     participant_role = guild.get_role(roles['participant'])
-                    institution_role = guild.get_role(roles[participant.institution.lower()])
+                    # institution_role = guild.get_role(roles[participant.institution.lower()])
                     await member.remove_roles(participant_role,
-                                              institution_role,
+                                              # institution_role,
                                               reason=f"InfoChallengeConcierge: {ctx.author.name} reset user roles")
                 else:
                     role = guild.get_role(roles[participant.role.lower()])
