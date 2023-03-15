@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   discord-bot:
-    image: gregjan/infochallengebot:0.6
+    image: gregjan/infochallengebot:1.5
     build:
       context: .
       dockerfile: Dockerfile
@@ -26,8 +26,14 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Use root as user
       MARIADB_DATABASE: eventbot
+    ports:
+      - target: 3306
+        published: 3306
+        mode: host
+        protocol: tcp
     networks:
       backend:
+      frontend:
   adminer:
     image: adminer
     restart: always
