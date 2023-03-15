@@ -29,8 +29,27 @@ To quickly get running
 1. Clone repository
 2. cd into directory
 3. Run `poetry install`
-4. Edit the values in the dotenv file and rename to `.env`
+1. Copy the dotenv file to '.env'
+1. Edit '.env' to fill in your configuration values.
 5. Run `poetry run python src/bot.py`
+
+## Docker Stack Quick Start
+This starts the front end, the database, and a database admin tool on port 8080.
+You must have enabled docker swarm mode. (docker swarm init)
+1. Clone repo
+1. cd into directory
+1. Run `docker build -t infochallengebot:1.0
+1. Copy dotenv file into .env and then edit the values.
+1. Start the stack like this:
+```
+$ docker stack deploy -c <(docker-compose config) ic
+```
+
+Bot waits 20 seconds for the DB to start up, but the MariaDB container image can take longer than that for Docker to download.
+Check the bot's logs for database related errors:  `docker service logs ic_discord-bot`
+If you see database connection errors, wait 5 minutes, then try:
+`docker service update --force ic_discord-bot`
+This makes the bot restart and try to reconnect.
 
 ## To Access Documentation
 Documentation is provided through mkdocs. You can start up a mkdocs server with the command `poetry run mkdocs serve` 

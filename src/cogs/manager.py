@@ -11,15 +11,6 @@ load_dotenv()
 
 LOGGING_STR = os.getenv('LOGGING_STR')
 EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
-EVENT_BOT_CHANNEL_ID = int(os.getenv('EVENT_BOT_CHANNEL_ID'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('BOT_MANAGER_ROLE_ID'))
-GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
-
-def is_owner_or_botmgr():
-    async def predicate(ctx):
-        role = discord.utils.get(ctx.guild.roles, id=BOT_MANAGER_ROLE_ID)
-        return (role in ctx.author.roles) or ctx.author.id == GUILD_OWNER_ID
-    return commands.check(predicate)
 
 class Manager(commands.Cog):
     def __init__(self, bot):
@@ -31,7 +22,7 @@ class Manager(commands.Cog):
         "manager",
         "Commands to manage InfoChallengeConcierge",
         guild_ids=[EVENT_GUILD_ID],
-        checks=[is_owner_or_botmgr()]
+        checks=[checks.is_owner_or_botmgr()]
     )
 
     @commands.guild_only()
@@ -88,8 +79,7 @@ class Manager(commands.Cog):
         self.log.info(f"**`ERROR:`** Test[{ctx.author.name}]: {type(error).__name__} - {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @commands.is_owner()
+    @checks.is_in_bot_channel()
     @manager_group.command(name='unload_cog', description="🚫 [RESTRICTED] Unload cog")
     async def _unload_cog(self, ctx, *, cog: Option(str, "What cog do you want to unload?")):
         self.log.info(f"unload_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")
@@ -111,8 +101,7 @@ class Manager(commands.Cog):
         self.log.info(f"**`ERROR:`** Unload Cog[{ctx.author.name}]: {type(error).__name__} - {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @commands.is_owner()
+    @checks.is_in_bot_channel()
     @manager_group.command(name='load_cog', description="🚫 [RESTRICTED] Load cog")
     async def _load_cog(self, ctx, *, cog: Option(str, "What cog do you want to load?")):
         self.log.info(f"load_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")
