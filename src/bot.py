@@ -10,19 +10,19 @@ from models import init_db
 
 load_dotenv()
 
-IS_PROD = os.environ['is_production'] == 'True'
-DB_CONN = os.getenv('db_conn_uri')
-EVENT_NAME = os.getenv('event_name')
-EVENT_GUILD_ID = int(os.getenv('event_guild_id'))
-DATA_DIR = os.getenv('data_dir')
-LOGGING_STR = os.getenv('logging_str')
-BOT_KEY = os.getenv('bot_prefix')
-BOT_TOKEN = os.getenv('bot_token')
-GUILD_OWNER_ID = int(os.getenv('guild_owner_id'))
+IS_PROD = os.environ['IS_PROD'] == 'True'
+
+EVENT_NAME = os.getenv('EVENT_NAME')
+
+EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
+GUILD_OWNER_ID = int(os.getenv('GUILD_OWNER_ID'))
+
+BOT_PREFIX = os.getenv('BOT_PREFIX')  # FIXME: Not in dotenv example
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+DB_CONN_URI = os.getenv('DB_CONN_URI')
+LOGGING_STR = os.getenv('LOGGING_STR')
 
 EVENT_BOT_ROLES = ['Planning Team']
-current_dir = Path('..')
-data_path = current_dir / DATA_DIR
 
 # Extensions (cogs) to load
 extensions = ["manager", "registrator", "teambuilder"]
@@ -34,7 +34,7 @@ intents.typing = False
 
 # Set up the bot
 bot = commands.Bot(
-    command_prefix=BOT_KEY,
+    command_prefix=BOT_PREFIX,
     description=f"Registration Bot for {EVENT_NAME}",
     intents=intents)
 bot.remove_command('help')

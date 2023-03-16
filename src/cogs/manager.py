@@ -1,7 +1,7 @@
 import os
 
 import discord as discord
-from discord.commands import permissions, Option, SlashCommandGroup, CommandPermission
+from discord.commands import permissions, Option, SlashCommandGroup
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -9,12 +9,8 @@ from common import logging, checks
 
 load_dotenv()
 
-LOGGING_STR = os.getenv('logging_str')
-EVENT_GUILD_ID = int(os.getenv('event_guild_id'))
-EVENT_BOT_CHANNEL_ID = int(os.getenv('event_bot_channel_id'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('bot_manager_role_id'))
-GUILD_OWNER_ID = int(os.getenv('guild_owner_id'))
-
+LOGGING_STR = os.getenv('LOGGING_STR')
+EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
 
 class Manager(commands.Cog):
     def __init__(self, bot):
@@ -26,14 +22,7 @@ class Manager(commands.Cog):
         "manager",
         "Commands to manage InfoChallengeConcierge",
         guild_ids=[EVENT_GUILD_ID],
-        permissions=[
-            CommandPermission(
-                BOT_MANAGER_ROLE_ID, 1, True
-            ),  # Only Users in Discord Managers
-            CommandPermission(
-                GUILD_OWNER_ID, 2, True
-            )  # Ensures the owner_id user can access this, and no one else
-        ]
+        checks=[checks.is_owner_or_botmgr()]
     )
 
     @commands.guild_only()
@@ -90,8 +79,7 @@ class Manager(commands.Cog):
         self.log.info(f"**`ERROR:`** Test[{ctx.author.name}]: {type(error).__name__} - {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @permissions.is_owner()
+    @checks.is_in_bot_channel()
     @manager_group.command(name='unload_cog', description="🚫 [RESTRICTED] Unload cog")
     async def _unload_cog(self, ctx, *, cog: Option(str, "What cog do you want to unload?")):
         self.log.info(f"unload_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")
@@ -113,8 +101,7 @@ class Manager(commands.Cog):
         self.log.info(f"**`ERROR:`** Unload Cog[{ctx.author.name}]: {type(error).__name__} - {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
-    @permissions.is_owner()
+    @checks.is_in_bot_channel()
     @manager_group.command(name='load_cog', description="🚫 [RESTRICTED] Load cog")
     async def _load_cog(self, ctx, *, cog: Option(str, "What cog do you want to load?")):
         self.log.info(f"load_cog [cogs.{cog}] of {len(self.bot.extensions)}: {ctx.author.name}")

@@ -1,0 +1,50 @@
+version: "3.3"
+services:
+  discord-bot:
+    image: gregjan/infochallengebot:1.5
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:  # cofigure these in your .env file outside of container
+      - IS_PROD=${IS_PROD}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_PREFIX=${BOT_PREFIX}
+      - EVENT_NAME=${EVENT_NAME}
+      - EVENT_GUILD_ID=${EVENT_GUILD_ID}
+      - EVENT_BOT_CHANNEL_ID=${EVENT_BOT_CHANNEL_ID}
+      - EVENT_CONTACT_EMAIL=${EVENT_CONTACT_EMAIL}
+      - DB_CONN_URI=mariadb+mariadbconnector://root:${MARIADB_ROOT_PASSWORD}@db:3306/eventbot
+      - GUILD_OWNER_ID=${GUILD_OWNER_ID}
+      - BOT_MANAGER_ROLE_ID=${BOT_MANAGER_ROLE_ID}
+      - LOGGING_STR=${LOGGING_STR}
+    networks:
+      frontend:
+      backend:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Use root as user
+      MARIADB_DATABASE: eventbot
+    ports:
+      - target: 3306
+        published: 3306
+        mode: host
+        protocol: tcp
+    networks:
+      backend:
+      frontend:
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - target: 8080
+        published: 8080
+        mode: host
+        protocol: tcp
+    networks:
+      frontend:
+      backend:
+networks:
+  frontend:
+  backend:

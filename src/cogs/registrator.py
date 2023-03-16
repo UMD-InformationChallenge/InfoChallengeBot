@@ -3,7 +3,7 @@ import discord as discord
 from discord.ext import commands
 from discord.ui import View, Button
 from discord import ButtonStyle
-from discord.commands import Option, SlashCommandGroup, CommandPermission
+from discord.commands import Option, SlashCommandGroup
 
 from validate_email_address import validate_email
 
@@ -16,16 +16,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-EVENT_NAME = os.getenv('event_name')
-EVENT_GUILD_ID = int(os.getenv('event_guild_id'))
-EVENT_CONTACT_EMAIL = os.getenv('event_contact_email')
-EVENT_BOT_CHANNEL_ID = int(os.getenv('event_bot_channel_id'))
-BOT_MANAGER_ROLE_ID = int(os.getenv('bot_manager_role_id'))
-GUILD_OWNER_ID = int(os.getenv('guild_owner_id'))
+EVENT_NAME = os.getenv('EVENT_NAME')
+EVENT_GUILD_ID = int(os.getenv('EVENT_GUILD_ID'))
+EVENT_CONTACT_EMAIL = os.getenv('EVENT_CONTACT_EMAIL')
 
-IS_PRODUCTION = os.getenv('is_production')
-LOGGING_STR = os.getenv('logging_str')
-
+IS_PROD = os.getenv('IS_PROD')
+LOGGING_STR = os.getenv('LOGGING_STR')
 
 async def sync_server_roles(guild: discord.Guild, member: discord.Member, participant: models.Participant):
     # Add Discord Roles.
@@ -33,9 +29,9 @@ async def sync_server_roles(guild: discord.Guild, member: discord.Member, partic
 
     if participant.role.lower() == 'participant':
         participant_role = guild.get_role(roles['participant'])
-        institution_role = guild.get_role(roles[participant.institution.lower()])
+        # institution_role = guild.get_role(roles[participant.institution.lower()])
 
-        await member.add_roles(institution_role,
+        await member.add_roles(# institution_role,
                                participant_role,
                                reason='InfoChallengeConcierge added roles')
     else:
@@ -304,14 +300,7 @@ class Registrator(commands.Cog):
         "reg",
         "Commands to manage registrations",
         guild_ids=[EVENT_GUILD_ID],
-        permissions=[
-            CommandPermission(
-                BOT_MANAGER_ROLE_ID, 1, True
-            ),  # Only Users in Discord Managers
-            CommandPermission(
-                GUILD_OWNER_ID, 2, True
-            ),  # Always allow owner
-        ]
+        checks=[checks.is_owner_or_botmgr()]
     )
 
     @commands.Cog.listener()
@@ -352,7 +341,7 @@ class Registrator(commands.Cog):
                 )
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
+    @checks.is_in_bot_channel()
     @registrator_group.command(name="reset", description="🚫 [RESTRICTED] Reset a users\'s roles.")
     async def _reset_user(self, ctx,
                           member: Option(discord.Member,
@@ -377,9 +366,9 @@ class Registrator(commands.Cog):
                 roles = dict([(r.name.lower(), int(r.id)) for r in guild.roles])
                 if participant.role.lower() == 'participant':
                     participant_role = guild.get_role(roles['participant'])
-                    institution_role = guild.get_role(roles[participant.institution.lower()])
+                    # institution_role = guild.get_role(roles[participant.institution.lower()])
                     await member.remove_roles(participant_role,
-                                              institution_role,
+                                              # institution_role,
                                               reason=f"InfoChallengeConcierge: {ctx.author.name} reset user roles")
                 else:
                     role = guild.get_role(roles[participant.role.lower()])
@@ -404,7 +393,7 @@ class Registrator(commands.Cog):
             self.log.info(f"**`ERROR:`** _reset_user_error[{ctx.author.name}]: {error}")
 
     @commands.guild_only()
-    @checks.is_in_channel(EVENT_BOT_CHANNEL_ID)
+    @checks.is_in_bot_channel()
     @registrator_group.command(name="connect_account", description="🚫 [RESTRICTED] Register a user.")
     async def _add_participant(self, ctx,
                                member: Option(discord.Member,

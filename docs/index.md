@@ -22,6 +22,8 @@ This project is not a product. Use at your own risk.
 This project uses a dotenv file to pass "secret" information to the application. The most important of which is 
 the discord bot token. Information about getting a bot token can be found here: https://discord.com/developers/applications
 
+Note: Some configuration items are Discord IDs, aka "snowflakes". You can find these in the Discord app when you enable "developer mode" for your profile.
+
 This bot requires the following:
 
 Scopes:
@@ -37,6 +39,10 @@ The bot also requires the following Privileged Gateway Intents:
 - Message Content Intent
 
 In the future, it may be possible to reduce the number of permissions required for the bot to run.
+
+You'll need to invite your bot to your server with a URL like this:
+https://discord.com/oauth2/authorize?client_id=<application id>&scope=bot&permissions=8
+
 
 ### Steps to run locally:
 

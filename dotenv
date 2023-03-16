@@ -1,19 +1,20 @@
 ####
 # Example dotenv file
 # Rename to .env and change settings for deploytment
+# Do not include this file (or .env) in docker builds
 ####
 # Development Settings
-is_production=False
-bot_token=<YOUR BOT TOKEN>
-bot_prefix=!
-event_name=InfoChallenge 2022
-event_guild_id=<YOUR GUILD ID>
-event_bot_channel_id=<THE BOT CHANNEL ID>
-event_contact_email=<CONTACT EMAIL FOR SUPPORT>
-# sqlite is for development only
-# Mariadb or another sqlalchemy supported database is recommended for production.
-db_conn_uri=sqlite:///db.sqlite3
-data_dir=data
-guild_owner_id=<OWNER ID>
-bot_manager_role_id=<ROLE WITH PERMISSIONS TO MANAGE BOT>
-logging_str=IC-BOT-DISCORD
+IS_PROD=<False until True>  # guards the prod database
+EVENT_NAME=<name of the event>
+EVENT_CONTACT_EMAIL=<CONTACT EMAIL FOR SUPPORT>
+
+# Discord IDs (find these in Discord developer mode)
+EVENT_GUILD_ID=<YOUR GUILD ID>
+EVENT_BOT_CHANNEL_ID=<THE BOT CHANNEL ID>
+GUILD_OWNER_ID=<OWNER ID>
+BOT_MANAGER_ROLE_ID=<ROLE WITH PERMISSIONS TO MANAGE BOT>
+
+BOT_TOKEN=<YOUR BOT TOKEN>
+BOT_PREFIX=!
+MARIADB_ROOT_PASSWORD=<MariaDB password for root account>
+LOGGING_STR=IC-BOT-DISCORD
